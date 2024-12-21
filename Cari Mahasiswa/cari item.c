@@ -60,3 +60,33 @@ int jumpSearchQTY(Inventory item[], int n, int query) {
 
     return -1; // Tidak ditemukan
 }
+
+void saveDatabase(Inventory item[], int n, const char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("\n File error...\n");
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        fprintf(file, "%s,%s,%d\n", item[i].name, item[i].category, item[i].quantity);
+    }
+    fclose(file);
+    printf("\n Data tersimpan ke %s...\n", filename);
+}
+
+// Fungsi untuk load database dari file
+int loadDatabase(Inventory item[], const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("\n File error...\n");
+        return 0;
+    }
+    int count = 0;
+    while (fscanf(file, "%[^,],%[^,],%d\n", item[count].name, item[count].category, &item[count].quantity) != EOF) {
+        count++;
+        if (count >= DATABASE) break; // Mencegah overflow
+    }
+    fclose(file);
+    printf("\n Data %d loaded dari %s...\n", count, filename);
+    return count;
+}
